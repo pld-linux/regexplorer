@@ -5,6 +5,7 @@ Version:	0.1.6
 Release:	1
 License:	QPL
 Source0:	http://dl.sourceforge.net/%{name}/%{name}-%{version}.tar.bz2
+# Source0-md5:	c617505a925c2a2fe5d5bc8cb0f70cb3
 Patch0:		%{name}-debian.patch
 Group:		Applications/Text
 URL:		http://regexplorer.sourceforge.net/
