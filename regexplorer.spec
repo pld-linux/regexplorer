@@ -2,7 +2,7 @@ Summary:	RegExplorer is a visual regular expression explorer
 Summary(pl):	Graficzna przegl±darka wyra¿eñ regularnych
 Name:		regexplorer
 Version:	0.1.6
-Release:	1
+Release:	2
 License:	QPL
 Source0:	http://dl.sourceforge.net/%{name}/%{name}-%{version}.tar.bz2
 Patch0:		%{name}-debian.patch
