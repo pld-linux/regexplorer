@@ -1,0 +1,430 @@
+--- regexplorer-0.1.6.orig/RegExp/qaregexp.cpp
++++ regexplorer-0.1.6/RegExp/qaregexp.cpp
+@@ -153,7 +153,19 @@
+   \return True if the subexpression matched.
+ */
+ 
+-bool QaRegExp::match( const QString &s, int sub = 0 )
++bool QaRegExp::match( const QString &s)
++{
++        return match(s, 0);
++}
++
++/*!
++  Matches a string against the regexp on the given sub expression.
++  \param s The string to match on.
++  \param sub Which sub expression should be checked, 0 is default and means the whole regexp.
++  \return True if the subexpression matched.
++*/
++
++bool QaRegExp::match( const QString &s, int sub )
+ {
+     setSubReg( true );
+     regmatch_t *tmp = new regmatch_t[NumSub + 1];
+@@ -186,7 +198,21 @@
+   \return Number of matches.
+ */
+ 
+-int QaRegExp::matchMultiple( const QString &s, int sub = 0 )
++int QaRegExp::matchMultiple( const QString &s )
++{
++        return matchMultiple( s, 0 );
++}
++
++/*!
++  Matches a string against the regexp on the given sub expression, will match as
++  many times as possible and extracting the wanted subexpression every time it
++  matches.
++  \param s The string to match on.
++  \param sub Which sub expression should be checked, 0 is default and means the whole regexp.
++  \return Number of matches.
++*/
++
++int QaRegExp::matchMultiple( const QString &s, int sub )
+ {
+     setSubReg( true );
+     regmatch_t *tmp = new regmatch_t[NumSub + 1];
+@@ -293,7 +319,16 @@
+   \return The string that matched the sub expression.
+ */
+ 
+-QString QaRegExp::matchString( int sub = 0 )
++QString QaRegExp::matchString()
++{
++        return Matches.toString(0);
++}
++
++/*!
++  \return The string that matched the sub expression.
++*/
++
++QString QaRegExp::matchString( int sub )
+ {
+     return Matches.toString(sub);
+ }
+@@ -311,7 +346,16 @@
+   \return The start offset of the matched sub expression.
+ */
+ 
+-int QaRegExp::matchBeginning( int sub = 0 ) const
++int QaRegExp::matchBeginning( ) const
++{
++    return Matches[0].start();
++}
++
++/*!
++  \return The start offset of the matched sub expression.
++*/
++
++int QaRegExp::matchBeginning( int sub ) const
+ {
+     return Matches[sub].start();
+ }
+@@ -320,6 +364,15 @@
+   \return The start offset of the matched sub expression.
+ */
+ 
++int QaRegExp::matchEnd( ) const
++{
++    return Matches[0].end();
++}
++
++/*!
++  \return The start offset of the matched sub expression.
++*/
++
+ int QaRegExp::matchEnd( int sub = 0 ) const
+ {
+     return Matches[sub].end();
+--- regexplorer-0.1.6.orig/RegExp/qaregexp.hpp
++++ regexplorer-0.1.6/RegExp/qaregexp.hpp
+@@ -28,12 +28,17 @@
+     void setCaseSensitive( bool s );
+     void setHandleNewline( bool h );
+ 
+-    bool match( const QString &s, int sub = 0 );
+-    int matchMultiple( const QString &s, int sub = 0 );
+-    QString matchString( int sub = 0 );
++    bool match( const QString &s );
++    bool match( const QString &s, int sub );
++    int matchMultiple( const QString &s );
++    int matchMultiple( const QString &s, int sub );
++    QString matchString();
++    QString matchString( int sub );
+     QStringList matchStrings();
+-    int matchBeginning( int sub = 0 ) const;
+-    int matchEnd( int sub = 0 ) const;
++    int matchBeginning() const;
++    int matchBeginning( int sub ) const;
++    int matchEnd() const;
++    int matchEnd( int sub ) const;
+     const QaRegExpMatch &matches() const;
+     int split( const QString &s );
+     int subCount() const;
+--- regexplorer-0.1.6.orig/qaperllanguage.cpp
++++ regexplorer-0.1.6/qaperllanguage.cpp
+@@ -194,7 +194,7 @@
+     {
+         if ( type == QaRegExpLanguage::Multiple )
+         {
+-            str = QString( "~= /%1/g" ).arg( str );
++            str = QString( "=~ /%1/g" ).arg( str );
+         }
+         else if ( type == QaRegExpLanguage::Split )
+         {
+@@ -202,7 +202,7 @@
+         }
+         else
+         {
+-            str = QString( "~= /%1/" ).arg( str );
++            str = QString( "=~ /%1/" ).arg( str );
+         }
+     }
+     return str;
+--- regexplorer-0.1.6.orig/debian/regexplorer.1x
++++ regexplorer-0.1.6/debian/regexplorer.1x
+@@ -0,0 +1,96 @@
++.\" $Header$
++.\"
++.\"	transcript compatibility for postscript use.
++.\"
++.\"	synopsis:  .P! <file.ps>
++.\"
++.de P!
++.fl
++\!!1 setgray
++.fl
++\\&.\"
++.fl
++\!!0 setgray
++.fl			\" force out current output buffer
++\!!save /psv exch def currentpoint translate 0 0 moveto
++\!!/showpage{}def
++.fl			\" prolog
++.sy sed -e 's/^/!/' \\$1\" bring in postscript file
++\!!psv restore
++.
++.de pF
++.ie     \\*(f1 .ds f1 \\n(.f
++.el .ie \\*(f2 .ds f2 \\n(.f
++.el .ie \\*(f3 .ds f3 \\n(.f
++.el .ie \\*(f4 .ds f4 \\n(.f
++.el .tm ? font overflow
++.ft \\$1
++..
++.de fP
++.ie     !\\*(f4 \{\
++.	ft \\*(f4
++.	ds f4\"
++'	br \}
++.el .ie !\\*(f3 \{\
++.	ft \\*(f3
++.	ds f3\"
++'	br \}
++.el .ie !\\*(f2 \{\
++.	ft \\*(f2
++.	ds f2\"
++'	br \}
++.el .ie !\\*(f1 \{\
++.	ft \\*(f1
++.	ds f1\"
++'	br \}
++.el .tm ? font underflow
++..
++.ds f1\"
++.ds f2\"
++.ds f3\"
++.ds f4\"
++'\" t 
++.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n  
++.TH "REGEXPLORER" "1x" 
++.SH "NAME" 
++regexplorer \(em Experiment with regular expressions; visually see the 
++matches 
++.SH "SYNOPSIS" 
++.PP 
++\fBregexplorer\fR 
++.SH "DESCRIPTION" 
++.PP 
++This manual page documents the 
++\fBregexplorer\fR command. 
++.PP 
++This manual page was written for the \fBDebian GNU/Linux\fP distribution 
++because the original program does not have a manual page. 
++.PP 
++\fBregexplorer\fR is an X11 application which 
++uses the QT library that features three important widgets: In 
++the first, one can enter any regular expression. In the second, 
++one can enter any text of any size (although small texts are 
++recommended to improve performance). In the third, the regular 
++expression of the first will be applied to the text in the 
++second widget, and the matches are highlighted. 
++.PP 
++\fBregexplorer\fR can then convert the 
++regular expression into the syntaxis of one of several 
++programming languages, to allow for copy-and-paste of the 
++regular expression in an editor or IDE. 
++ 
++.SH "SEE ALSO" 
++.PP 
++regex (7). 
++.SH "AUTHOR" 
++.PP 
++Regexplorer was written by Jan Borsodi (jb@ez.no) 
++.PP 
++This manual page was written by Wouter Verhelst (wouter@debian.org) for 
++the \fBDebian GNU/Linux\fP system (but may be used by others).  Permission is 
++granted to copy, distribute and/or modify this document under 
++the terms of the GNU Free Documentation 
++License, Version 1.1 or any later version published by the Free 
++Software Foundation; with no Invariant Sections, no Front-Cover 
++Texts and no Back-Cover Texts. 
++.\" created by instant / docbook-to-man, Sun 23 May 2004, 12:00 
+--- regexplorer-0.1.6.orig/debian/regexplorer.1.sgml
++++ regexplorer-0.1.6/debian/regexplorer.1.sgml
+@@ -0,0 +1,121 @@
++<!doctype refentry PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
++
++<!-- Process this file with docbook-to-man to generate an nroff manual
++     page: `docbook-to-man manpage.sgml > manpage.1'.  You may view
++     the manual page with: `docbook-to-man manpage.sgml | nroff -man |
++     less'.  A typical entry in a Makefile or Makefile.am is:
++
++manpage.1: manpage.sgml
++	docbook-to-man $< > $@
++  -->
++
++  <!-- Fill in your name for FIRSTNAME and SURNAME. -->
++  <!ENTITY dhfirstname "<firstname>Wouter</firstname>">
++  <!ENTITY dhsurname   "<surname>Verhelst</surname>">
++  <!-- Please adjust the date whenever revising the manpage. -->
++  <!ENTITY dhdate      "<date>march 25, 2002</date>">
++  <!-- SECTION should be 1-8, maybe w/ subsection other parameters are
++       allowed: see man(7), man(1). -->
++  <!ENTITY dhsection   "<manvolnum>1x</manvolnum>">
++  <!ENTITY dhemail     "<email>wouter@debian.org</email>">
++  <!ENTITY dhusername  "Wouter Verhelst">
++  <!ENTITY dhucpackage "<refentrytitle>REGEXPLORER</refentrytitle>">
++  <!ENTITY dhpackage   "regexplorer">
++
++  <!ENTITY debian      "<productname>Debian GNU/Linux</productname>">
++  <!ENTITY gnu         "<acronym>GNU</acronym>">
++]>
++
++<refentry>
++  <refentryinfo>
++    <address>
++      &dhemail;
++    </address>
++    <author>
++      &dhfirstname;
++      &dhsurname;
++    </author>
++    <copyright>
++      <year>2002</year>
++      <holder>&dhusername;</holder>
++    </copyright>
++    &dhdate;
++  </refentryinfo>
++  <refmeta>
++    &dhucpackage;
++
++    &dhsection;
++  </refmeta>
++  <refnamediv>
++    <refname>&dhpackage;</refname>
++
++    <refpurpose>Experiment with regular expressions; visually see the
++      matches</refpurpose>
++  </refnamediv>
++  <refsynopsisdiv>
++    <cmdsynopsis>
++      <command>&dhpackage;</command>
++
++    </cmdsynopsis>
++  </refsynopsisdiv>
++  <refsect1>
++    <title>DESCRIPTION</title>
++
++    <para>This manual page documents the
++      <command>&dhpackage;</command> command.</para>
++
++    <para>This manual page was written for the &debian; distribution
++      because the original program does not have a manual page.</para>
++
++    <para><command>&dhpackage;</command> is an X11 application which
++      uses the QT library that features three important widgets: In
++      the first, one can enter any regular expression. In the second,
++      one can enter any text of any size (although small texts are
++      recommended to improve performance). In the third, the regular
++      expression of the first will be applied to the text in the
++      second widget, and the matches are highlighted.</para>
++
++    <para><command>&dhpackage;</command> can then convert the
++      regular expression into the syntaxis of one of several
++      programming languages, to allow for copy-and-paste of the
++      regular expression in an editor or IDE.
++    </para>
++
++  </refsect1>
++  <refsect1>
++    <title>SEE ALSO</title>
++
++    <para>regex (7).</para>
++
++  </refsect1>
++  <refsect1>
++    <title>AUTHOR</title>
++    <para>Regexplorer was written by Jan Borsodi (jb@ez.no)</para>
++
++    <para>This manual page was written by &dhusername; (&dhemail;) for
++      the &debian; system (but may be used by others).  Permission is
++      granted to copy, distribute and/or modify this document under
++      the terms of the <acronym>GNU</acronym> Free Documentation
++      License, Version 1.1 or any later version published by the Free
++      Software Foundation; with no Invariant Sections, no Front-Cover
++      Texts and no Back-Cover Texts.</para>
++
++  </refsect1>
++</refentry>
++
++<!-- Keep this comment at the end of the file
++Local variables:
++mode: sgml
++sgml-omittag:t
++sgml-shorttag:t
++sgml-minimize-attributes:nil
++sgml-always-quote-attributes:t
++sgml-indent-step:2
++sgml-indent-data:t
++sgml-parent-document:nil
++sgml-default-dtd-file:nil
++sgml-exposed-tags:nil
++sgml-local-catalogs:nil
++sgml-local-ecat-files:nil
++End:
++-->
+--- regexplorer-0.1.6.orig/qaregexpwidget.cpp
++++ regexplorer-0.1.6/qaregexpwidget.cpp
+@@ -53,6 +53,7 @@
+ #include <qglobal.h>
+ #include <qstringlist.h>
+ #include <qvaluelist.h>
++#include <qfont.h>
+ 
+ /*!
+   \class QRegExpWidget qregexpwidget.hpp
+@@ -125,6 +126,7 @@
+                 QLabel *patlab = new QLabel( tr( "Pattern:" ), LeftSplit );
+                 hlay->addWidget( patlab, 0 );
+                 RegEd = new QLineEdit( LeftSplit );
++		RegEd->setFont(QFont("fixed"));
+                 hlay->addWidget( RegEd, 0 );
+                 connect( RegEd, SIGNAL( textChanged( const QString & ) ),
+                          this, SLOT( doTextChange( const QString & ) ) );
+@@ -137,6 +139,7 @@
+             Lay->addWidget( RightSplit, 1 );
+             {
+                 Edit = new QMultiLineEdit( RightSplit );
++		Edit->setFont(QFont("fixed"));
+ //              Edit->setText( "void test::setText( const QString &s )\n"
+ //                             "{\n"
+ //                             "}\n" );
+@@ -145,6 +148,7 @@
+ 
+                 TextVu = new QTextBrowser( RightSplit );
+                 TextVu->setPaper( Back );
++		TextVu->setFont(QFont("fixed"));
+ //              TextVu->setText( "void test::setText( const QString &s )<br>"
+ //                               "{<br>"
+ //                               "}<br>" );
+@@ -547,10 +551,12 @@
+             case QaRegExpError::UnmatchedParenthesis:
+                 ErrLabel->setText( tr( "Incomplete input" ) );
+                 PatDisp->setText( "" );
++		Update=false;
+                 break;
+             default:
+                 ErrLabel->setText( e.error() );
+                 PatDisp->setText( "" );
++                Update=false;
+         }
+     }
+ }
+@@ -581,6 +587,7 @@
+         SubMatch = 0;
+     if ( Update )
+         updateMatch();
++    Update=true;
+ }
+ 
+ //  QString QaRegExpWidget::toLisp( const QString &s )
+@@ -1503,6 +1510,8 @@
+ 
+ void QaRegExpWidget::polish()
+ {
++    QWidget::polish();
++    multiTextChanged();
+     resize( WSize );
+ }
+ 
