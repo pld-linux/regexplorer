@@ -4,10 +4,10 @@ Name:		regexplorer
 Version:	0.1.6
 Release:	2
 License:	QPL
-Source0:	http://dl.sourceforge.net/%{name}/%{name}-%{version}.tar.bz2
+Group:		Applications/Text
+Source0:	http://dl.sourceforge.net/regexplorer/%{name}-%{version}.tar.bz2
 # Source0-md5:	c617505a925c2a2fe5d5bc8cb0f70cb3
 Patch0:		%{name}-debian.patch
-Group:		Applications/Text
 URL:		http://regexplorer.sourceforge.net/
 BuildRequires:	qt-devel
 BuildRequires:	tmake
@@ -20,8 +20,8 @@ regular expression much easier to write and maintain.
 
 %description -l pl
 RegExplorer jest graficzn± przegl±dark± wyra¿eñ regularnych,
-pozwalaj±ca za zapisywanie wyra¿eñ i graficzny podgl±d pasuj±cych,
-przez co wyra¿enia regularne s± ³atwiejsze do zapisywania i
+pozwalaj±c± na pisywanie wyra¿eñ regularnych i graficzny podgl±d
+dopasowañ, przez co wyra¿enia regularne s± ³atwiejsze do zapisywania i
 zarz±dzania.
 
 %prep
