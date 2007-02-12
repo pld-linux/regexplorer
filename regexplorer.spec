@@ -1,5 +1,5 @@
 Summary:	RegExplorer is a visual regular expression explorer
-Summary(pl):	Graficzna przegl±darka wyra¿eñ regularnych
+Summary(pl.UTF-8):   Graficzna przeglÄ…darka wyraÅ¼eÅ„ regularnych
 Name:		regexplorer
 Version:	0.1.6
 Release:	2
@@ -18,11 +18,11 @@ RegExplorer is a visual regular expression explorer, it allows for
 writing regular expressions and visually see the matches, thus making
 regular expression much easier to write and maintain.
 
-%description -l pl
-RegExplorer jest graficzn± przegl±dark± wyra¿eñ regularnych,
-pozwalaj±c± na pisywanie wyra¿eñ regularnych i graficzny podgl±d
-dopasowañ, przez co wyra¿enia regularne s± ³atwiejsze do zapisywania i
-zarz±dzania.
+%description -l pl.UTF-8
+RegExplorer jest graficznÄ… przeglÄ…darkÄ… wyraÅ¼eÅ„ regularnych,
+pozwalajÄ…cÄ… na pisywanie wyraÅ¼eÅ„ regularnych i graficzny podglÄ…d
+dopasowaÅ„, przez co wyraÅ¼enia regularne sÄ… Å‚atwiejsze do zapisywania i
+zarzÄ…dzania.
 
 %prep
 %setup -q
