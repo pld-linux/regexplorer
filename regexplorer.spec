@@ -1,5 +1,5 @@
 Summary:	RegExplorer is a visual regular expression explorer
-Summary(pl.UTF-8):   Graficzna przeglądarka wyrażeń regularnych
+Summary(pl.UTF-8):	Graficzna przeglądarka wyrażeń regularnych
 Name:		regexplorer
 Version:	0.1.6
 Release:	2
